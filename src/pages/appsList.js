@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { AppStoreContext } from "../appStoreContext";
 import { ListGroup, Button } from "react-bootstrap";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useNavigate } from "react-router-dom";
+import { CountdownTimer } from "../components";
 
 export const AppsList = observer(() => {
   const store = useContext(AppStoreContext);
@@ -14,7 +14,6 @@ export const AppsList = observer(() => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e, index) => {
-    console.log({ e, index });
     e.dataTransfer.setData("index", index.toString());
     setIsDragging(true);
   };
@@ -82,12 +81,12 @@ export const AppsList = observer(() => {
   const handleAddApp = () => {
     navigate("/add");
   };
-  const remainingPercentage = (store?.seconds / 60) * 100;
+
   return (
     <div data-testid="apps-list">
       <h3 className="my-5 text-center">Authenticators list</h3>
       <ListGroup as="ul">
-        {items?.map((item, index) => {
+        {store?.appsList?.map((item, index) => {
           return (
             <ListGroup.Item
               key={index}
@@ -105,26 +104,17 @@ export const AppsList = observer(() => {
                 <p className="fw-bold mb-0">{item?.name}</p>
                 <p className="fw-bold h4">{item?.code}</p>
               </div>
-              <CountdownCircleTimer
-                isPlaying
+              <CountdownTimer
                 duration={60}
-                colors={"#004777"}
-                size={50}
-                strokeWidth={5}
-                trailStrokeWidth={5}
+                color="#ff0000"
+                radius={25}
+                strokeWidth={4}
+                textColor="#000"
+                fontSize={14}
                 onComplete={() => {
                   return { shouldRepeat: true };
-                }}>
-                {({ remainingTime }) => {
-                  return (
-                    <div className="d-flex align-items-center justify-content-center">
-                      <p className="small mb-0">
-                        {remainingPercentage.toFixed(0)}%
-                      </p>
-                    </div>
-                  );
                 }}
-              </CountdownCircleTimer>
+              />
             </ListGroup.Item>
           );
         })}
